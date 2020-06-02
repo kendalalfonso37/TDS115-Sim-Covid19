@@ -1,7 +1,14 @@
-setwd("C:/Users/kenda/Proyectos/CovidSimulacion")
-install.packages(c("sp", "here"))
-library(sp)
+# Descomentar la siguiente linea para instalar los paquetes.
+#install.packages(c("sp", "here"))
 
+## Cargar librerias a utilizar
+library(sp)
+library(here)
+
+## Raiz donde se encuentran los archivos del proyecto.
+## Cambiar por la ruta que necesiten
+root <- paste(here(), "/Proyectos/TDS115-Sim-Covid19/RStudio/", sep = "") 
+setwd(root)
 ## Parametros (Casos iniciales por Depto, No de Dias a simular. 
 ## Poblacion total, Parametros de SIR)
 
@@ -10,19 +17,18 @@ library(sp)
 ## Probabilidades de contagio (Por Departamentos)
 
 ## Mapa de El Salvador con Division Departamental
-esa <- readRDS("gadm36_SLV_1_sp.rds")
+esa <- readRDS(paste(root, "gadm36_SLV_1_sp.rds", sep = ""))
 
-## Mapa de El Salvador con Division de Municipios
-esa2 <- readRDS("gadm36_SLV_2_sp.rds")
+## Mapa de El Salvador con Division Municipal
+#esa2 <- readRDS(paste(root, "gadm36_SLV_2_sp.rds", sep = ""))
 
+## Plotear Mapa de El Salvador
 plot(esa)
 
-#ss <- esa[esa$NAME_1=='San Salvador']
-
-#writeClipboard(unique(esa@data$NAME_1))
-
-confirmados <- read.csv("casos_municipios.csv", encoding = "UTF-8")
-confirmados
+## Recuperar datos de Confirmados por Departamento
+confirmados <- read.csv(paste(root, "casos_municipios.csv", sep = ""), encoding = "UTF-8")
+#confirmados
+## Asignar la informacion de confirmados al mapa:
 esa@data<-confirmados
 
 #spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "SARS Covid19", sub="El Salvador")
