@@ -1,0 +1,19 @@
+Parametros para Simulacion:
+
+- Cantidad de casos iniciales por Departamento
+- Tasa de Contagio de Covid19 por Departamento
+- No de Dias a Simular
+- 
+
+
+Datos Conocidos sobre Covid-19:
+- Poblacion total: 6,581,859 Habitantes en El Salvador
+- Probabilidad de Contagio: 15%
+- Probabilidad de Recuperación: 96%
+- Probabilidad de Mortalidad: 4%
+- Tiempo de Incubacion del virus: 15 días
+
+Datos SIR:
+- Tasa de Transmision (Valor beta): 1.1897
+- Tasa de Recuperacion (Gamma): 
+- R_0 (Beta/Gamma): Tiene diferentes escenarios de acuerdo a las politicas de contencion de personas
