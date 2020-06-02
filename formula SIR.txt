@@ -1,0 +1,37 @@
+t=tiempo en que se simulara la propagacion
+
+Susceptible= cantidad de poblacion que puede enfermarse
+
+Infectado= describe al numero de infectados empezando ppor 1
+
+Recuperados= inicialmente no hay
+
+Fallecidos= inicialmente no hay
+
+Contagios= infectados*tasa_de_contagio*poblacion_susceptible / SUMA(Susceptibles+infectados+recuperados)*probabilidad_de_contagio
+
+Recuperaciones= (Infectados*tasa_de_recuperacion)/duracion_media_de_enfermedad_en_dias
+
+Fallecidos= (Infectados*tasa_de_recuperacion)/duracion_media_de_enfermedad
+
+
+//el numero de individuos susceptibles despues de un dia es igual al numero de individuos susceptibles un dia antes menos los contagios de hoy
+
+Susceptibles_1= susceptibles-Ncontagios
+
+//El numero de infectados despues de un dia es igual a la cantidad de infectados del dia anterior mas los contagios de hoy menos los recuperados 
+menos los fallecidos
+
+Infectados= infectados_ayer+contagios_hoy-recuperados-fallecidos
+
+El numero de recuperados y fallecidos es acumulativo
+
+recuperados=recuperados_ayer+recuperados_hoy
+
+fallecidos= fallecidos_ayer+fallecidos_hoy
+
+Contagios totales= Suma de contagios+ primer infectado
+
+
+
+
