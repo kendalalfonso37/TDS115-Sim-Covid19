@@ -31,6 +31,8 @@ confirmados <- read.csv(paste(root, "/casos_municipios.csv", sep = ""), encoding
 ## Asignar la informacion de confirmados al mapa:
 esa@data <- confirmados
 
+## Dibujar los casos de contagios en el mapa:
 #spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "SARS Covid19", sub="El Salvador")
 spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "SARS Covid19", sub="El Salvador")
+
 
