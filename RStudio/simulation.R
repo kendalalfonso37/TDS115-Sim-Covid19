@@ -9,13 +9,18 @@ library(deSolve)
 library(sp)
 library(here)
 
+## (Se deja digits = 0 para que no muestre valores decimales la tabla out, luego se restablece a digits = 7)
+options(digits = 0)
+
 ## Parametros a solicitar:
 #tamaño poblacional
 N = 10000
+
 # Dias a Simular:
 days <- 100
+
 # Semilla de aleatoriedad:
-seed <- 48
+seed <- 9
 set.seed(seed)
 
 #estado inicial de la simulacion (Tentativamente parametrizable)
@@ -23,11 +28,13 @@ init <- c(S = N - 1,
           I = 1,
           R = 0,
           m = 0)
+
 #parámetros del modelo (coeficientes de las variables tentativamente constantes)
 param <- c(beta = 0.24,
            gamma = 1./14,
            mu = 0.006,
            N = N)
+
 #crear la función con las ODE
 sir <- function(times, init, param) {
   with(as.list(c(init, param)), {
@@ -40,19 +47,18 @@ sir <- function(times, init, param) {
     return(list(c(dS, dI, dR, dm)))
   })
 }
+
 # intervalo de tiempo y resolución
 times <- seq(0, days, by = 1)
+
 # resolver el sistema de ecuaciones con función 'ode'
 out <- ode(y = init, times = times, func = sir, parms = param)
+
 # cambiar out a un data.frame
 out <- as.data.frame(out) #aqui puede multiplicar 'out' por N
 
-## (Se deja digits = 0 para que no muestre valores decimales la tabla out, luego se restablece a digits = 7)
-options(digits = 0)
-
-
 ## Avisar sobre datos de la simulacion ejecutada con el Modelo SIR:
-print("Datos Tabulados despues de ejecutar el modelo SIR: S - Susceptibles, I - Infectados, R - Recuperados, m - Fallecidos")
+message("Datos Tabulados despues de ejecutar el modelo SIR: S - Susceptibles, I - Infectados, R - Recuperados, m - Fallecidos")
 
 ## Mostrar datos del modelo SIR Ejecutado
 View(out)
@@ -74,7 +80,7 @@ legend(x = 2, y = max(out$R), c("Susceptibles", "Infectados", "Recuperados", "Fa
        pch = 1, col = c(1,2,3,4), bty = "n", cex = 1)
 
 ## Avisar sobre Grafica de la Simulacion:
-print("Grafica del Modelo SIR con Fallecidos:")
+message("Grafica del Modelo SIR con Fallecidos:")
 
 ## Pausa de Ejecucion:
 invisible(readline(prompt="Presione [enter] para continuar "))
@@ -113,7 +119,7 @@ infectados <- cbind(c(
   as.integer(runif(1, min = 0.06, max = 0.08)* out$I[nrow(out)]), # Sonsonate    (0.07)
   as.integer(runif(1, min = 0.04, max = 0.06)* out$I[nrow(out)])  # Usulutan     (0.05)
 ))
-
+Sys.sleep(1)
 recuperados <- cbind(c(
   as.integer(runif(1, min = 0.04, max = 0.06)* out$R[nrow(out)]), # Ahuachapan   (0.05)
   as.integer(runif(1, min = 0.02, max = 0.03)* out$R[nrow(out)]), # Cabañas      (0.02)
@@ -147,7 +153,7 @@ fallecidos <- cbind(c(
   as.integer(runif(1, min = 0.06, max = 0.08)* out$m[nrow(out)]), # Sonsonate    (0.07)
   as.integer(runif(1, min = 0.04, max = 0.06)* out$m[nrow(out)])  # Usulutan     (0.05)
 ))
-
+Sys.sleep(1)
 ## Crear el data.frame a mostrar con los resultados:
 tabulacion <- data.frame(susceptibles, infectados, recuperados, fallecidos, 
                          row.names = c("Ahuachapan", "Cabañas", "Chalatenango", "Cuscatlan",
@@ -156,7 +162,7 @@ tabulacion <- data.frame(susceptibles, infectados, recuperados, fallecidos,
                                        "Santa Ana", "Sonsonate", "Usulutan"))
 
 # Avisar Tabulacion de datos por Departamento:
-sprintf("Tabulacion de datos de SIRF por Departamento en El Salvador en el día %s:", days)
+message("Tabulacion de datos de SIRF por Departamento en El Salvador en el día ", days,":")
 
 # Mostrar Tabulacion
 View(tabulacion)
@@ -170,12 +176,15 @@ total_infectados <- as.integer(out$I[nrow(out)])
 total_recuperados <- as.integer(out$R[nrow(out)])
 total_fallecidos <- as.integer(out$m[nrow(out)])
 
+## Descanso de 1 segundo
+Sys.sleep(1)
+
 ## Crear data frame con datos globales
 tabGlobal <- data.frame(total_susceptibles, total_infectados, total_recuperados, total_fallecidos, 
                         row.names = c("Total"))
 
 # Avisar Tabulacion de datos por Departamento:
-sprintf("Total de Susceptibles, Infectados, Recuperados y Fallecidos en El Salvador en el día %s:", days)
+message("Total de Susceptibles, Infectados, Recuperados y Fallecidos en El Salvador en el día ", days,":")
 
 ## Mostrar el data frame de datos globales:
 View(tabGlobal)
@@ -188,11 +197,14 @@ invisible(readline(prompt="Presione [enter] para continuar "))
 max_infectados <- max(as.integer(out$I))
 dia_max_infectados <- min(which(as.integer(out$I) == max_infectados))
 
+# Descanso de 1 segundo
+Sys.sleep(1)
+
 ## Crear Data Frame con los maximos de infectados, recuperados y fallecidos en la simulacion:
 tabMax <- data.frame(max_infectados, dia_max_infectados)
 
 # Avisar Tabulacion de datos por Departamento:
-sprintf("Maximo de Susceptibles, Infectados, Recuperados y Fallecidos en El Salvador:")
+message("Maximo de Susceptibles, Infectados, Recuperados y Fallecidos en El Salvador:")
 
 ## Mostrar el data frame de datos globales:
 View(tabMax)
@@ -209,8 +221,10 @@ setwd(root)
 ## Escribir en csv los casos correspondientes:
 write.csv(susceptibles, "susceptibles.csv")
 write.csv(infectados, "infectados.csv")
+Sys.sleep(1)
 write.csv(recuperados, "recuperados.csv")
 write.csv(fallecidos, "fallecidos.csv")
+Sys.sleep(1)
 
 ## Mapa de El Salvador con Division Departamental
 esa <- readRDS(paste(root, "/gadm36_SLV_1_sp.rds", sep = ""))
@@ -219,57 +233,85 @@ esa <- readRDS(paste(root, "/gadm36_SLV_1_sp.rds", sep = ""))
 #esa2 <- readRDS(paste(root, "gadm36_SLV_2_sp.rds", sep = ""))
 
 ## Plotear Mapa de El Salvador
-plot(esa)
+#plot(esa)
 
+## Aviso Generacion de Mapas de Calor.
+message("Generacion de Mapas de Calor por Estado...")
 
 ##### Susceptibles
 ## Recuperar datos de Confirmados por Departamento
 confirmados <- read.csv(paste(root, "/susceptibles.csv", sep = ""), encoding = "UTF-8")
-#confirmados
+Sys.sleep(1)
+
 ## Asignar la informacion de confirmados al mapa:
 confirmados$X <- NULL
 esa@data <- confirmados
 
-## Dibujar los casos de contagios en el mapa:
-spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Susceptibles por Departamento", sub="El Salvador")
-spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Susceptibles por Departamento", sub="El Salvador")
+## Aviso de Mapa 
+message("Mapa de Susceptibles ")
 
+## Dibujar los casos de contagios en el mapa:
+#spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Susceptibles por Departamento", sub="El Salvador")
+spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Susceptibles por Departamento", sub="El Salvador")
+Sys.sleep(1)
+## Pausa de Ejecucion:
+invisible(readline(prompt="Presione [enter] para continuar "))
 
 ##### Infectados
 ## Recuperar datos de Confirmados por Departamento
 confirmados <- read.csv(paste(root, "/infectados.csv", sep = ""), encoding = "UTF-8")
-#confirmados
+Sys.sleep(1)
+
 ## Asignar la informacion de confirmados al mapa:
 confirmados$X <- NULL
 esa@data <- confirmados
 
-## Dibujar los casos de contagios en el mapa:
-spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Infectados por Departamento", sub="El Salvador")
-spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Infectados por Departamento", sub="El Salvador")
+## Aviso de Mapa 
+message("Mapa de Infectados ")
 
+## Dibujar los casos de contagios en el mapa:
+#spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Infectados por Departamento", sub="El Salvador")
+spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Infectados por Departamento", sub="El Salvador")
+Sys.sleep(1)
+## Pausa de Ejecucion:
+invisible(readline(prompt="Presione [enter] para continuar "))
 
 ##### Recuperados
 ## Recuperar datos de Confirmados por Departamento
 confirmados <- read.csv(paste(root, "/recuperados.csv", sep = ""), encoding = "UTF-8")
-#confirmados
+Sys.sleep(1)
+
 ## Asignar la informacion de confirmados al mapa:
 confirmados$X <- NULL
 esa@data <- confirmados
 
+## Aviso de Mapa 
+message("Mapa de Recuperados ")
+
 ## Dibujar los casos de contagios en el mapa:
-spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Recuperados por Departamento", sub="El Salvador")
+#spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Recuperados por Departamento", sub="El Salvador")
 spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Recuperados por Departamento", sub="El Salvador")
-
-
+Sys.sleep(1)
+## Pausa de Ejecucion:
+invisible(readline(prompt="Presione [enter] para continuar "))
 
 ##### Fallecidos
 ## Recuperar datos de Confirmados por Departamento
 confirmados <- read.csv(paste(root, "/fallecidos.csv", sep = ""), encoding = "UTF-8")
-#confirmados
+Sys.sleep(1)
+
 ## Asignar la informacion de confirmados al mapa:
 confirmados$X <- NULL
 esa@data <- confirmados
 
+## Aviso de Mapa 
+message("Mapa de Fallecidos ")
+
 ## Dibujar los casos de contagios en el mapa:
-spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Susceptibles por Departamento", sub="El Salvador")
-spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Susceptibles por Departamento", sub="El Salvador")
+#spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Fallecidos por Departamento", sub="El Salvador")
+spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Fallecidos por Departamento", sub="El Salvador")
+
+## Pausa de Ejecucion:
+invisible(readline(prompt="Presione [enter] para continuar "))
+
+invisible(readline(prompt="Fin de Simulacion "))
