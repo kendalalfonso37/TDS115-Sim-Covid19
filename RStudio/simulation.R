@@ -9,12 +9,9 @@ library(deSolve)
 library(sp)
 library(here)
 
-## (Se deja digits = 0 para que no muestre valores decimales la tabla out, luego se restablece a digits = 7)
-options(digits = 0)
-
 ## Parametros a solicitar:
 #tamaño poblacional
-N = 10000
+N = 25000
 
 # Dias a Simular:
 days <- 100
@@ -59,6 +56,9 @@ out <- as.data.frame(out) #aqui puede multiplicar 'out' por N
 
 ## Avisar sobre datos de la simulacion ejecutada con el Modelo SIR:
 message("Datos Tabulados despues de ejecutar el modelo SIR: S - Susceptibles, I - Infectados, R - Recuperados, m - Fallecidos")
+
+## (Se deja digits = 0 para que no muestre valores decimales la tabla out, luego se restablece a digits = 7)
+options(digits = 0)
 
 ## Mostrar datos del modelo SIR Ejecutado
 View(out)
@@ -119,7 +119,7 @@ infectados <- cbind(c(
   as.integer(runif(1, min = 0.06, max = 0.08)* out$I[nrow(out)]), # Sonsonate    (0.07)
   as.integer(runif(1, min = 0.04, max = 0.06)* out$I[nrow(out)])  # Usulutan     (0.05)
 ))
-Sys.sleep(1)
+
 recuperados <- cbind(c(
   as.integer(runif(1, min = 0.04, max = 0.06)* out$R[nrow(out)]), # Ahuachapan   (0.05)
   as.integer(runif(1, min = 0.02, max = 0.03)* out$R[nrow(out)]), # Cabañas      (0.02)
@@ -153,7 +153,7 @@ fallecidos <- cbind(c(
   as.integer(runif(1, min = 0.06, max = 0.08)* out$m[nrow(out)]), # Sonsonate    (0.07)
   as.integer(runif(1, min = 0.04, max = 0.06)* out$m[nrow(out)])  # Usulutan     (0.05)
 ))
-Sys.sleep(1)
+
 ## Crear el data.frame a mostrar con los resultados:
 tabulacion <- data.frame(susceptibles, infectados, recuperados, fallecidos, 
                          row.names = c("Ahuachapan", "Cabañas", "Chalatenango", "Cuscatlan",
@@ -176,9 +176,6 @@ total_infectados <- as.integer(out$I[nrow(out)])
 total_recuperados <- as.integer(out$R[nrow(out)])
 total_fallecidos <- as.integer(out$m[nrow(out)])
 
-## Descanso de 1 segundo
-Sys.sleep(1)
-
 ## Crear data frame con datos globales
 tabGlobal <- data.frame(total_susceptibles, total_infectados, total_recuperados, total_fallecidos, 
                         row.names = c("Total"))
@@ -196,9 +193,6 @@ invisible(readline(prompt="Presione [enter] para continuar "))
 ## Obtener el maximo de infectados y en que dia fue el pico de infectados:
 max_infectados <- max(as.integer(out$I))
 dia_max_infectados <- min(which(as.integer(out$I) == max_infectados))
-
-# Descanso de 1 segundo
-Sys.sleep(1)
 
 ## Crear Data Frame con los maximos de infectados, recuperados y fallecidos en la simulacion:
 tabMax <- data.frame(max_infectados, dia_max_infectados)
@@ -221,10 +215,9 @@ setwd(root)
 ## Escribir en csv los casos correspondientes:
 write.csv(susceptibles, "susceptibles.csv")
 write.csv(infectados, "infectados.csv")
-Sys.sleep(1)
 write.csv(recuperados, "recuperados.csv")
 write.csv(fallecidos, "fallecidos.csv")
-Sys.sleep(1)
+write.csv(tabulacion, "tabulacion.csv")
 
 ## Mapa de El Salvador con Division Departamental
 esa <- readRDS(paste(root, "/gadm36_SLV_1_sp.rds", sep = ""))
@@ -233,7 +226,7 @@ esa <- readRDS(paste(root, "/gadm36_SLV_1_sp.rds", sep = ""))
 #esa2 <- readRDS(paste(root, "gadm36_SLV_2_sp.rds", sep = ""))
 
 ## Plotear Mapa de El Salvador
-#plot(esa)
+# plot(esa)
 
 ## Aviso Generacion de Mapas de Calor.
 message("Generacion de Mapas de Calor por Estado...")
@@ -241,7 +234,6 @@ message("Generacion de Mapas de Calor por Estado...")
 ##### Susceptibles
 ## Recuperar datos de Confirmados por Departamento
 confirmados <- read.csv(paste(root, "/susceptibles.csv", sep = ""), encoding = "UTF-8")
-Sys.sleep(1)
 
 ## Asignar la informacion de confirmados al mapa:
 confirmados$X <- NULL
@@ -253,14 +245,13 @@ message("Mapa de Susceptibles ")
 ## Dibujar los casos de contagios en el mapa:
 #spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Susceptibles por Departamento", sub="El Salvador")
 spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Susceptibles por Departamento", sub="El Salvador")
-Sys.sleep(1)
+
 ## Pausa de Ejecucion:
 invisible(readline(prompt="Presione [enter] para continuar "))
 
 ##### Infectados
 ## Recuperar datos de Confirmados por Departamento
 confirmados <- read.csv(paste(root, "/infectados.csv", sep = ""), encoding = "UTF-8")
-Sys.sleep(1)
 
 ## Asignar la informacion de confirmados al mapa:
 confirmados$X <- NULL
@@ -272,14 +263,13 @@ message("Mapa de Infectados ")
 ## Dibujar los casos de contagios en el mapa:
 #spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Infectados por Departamento", sub="El Salvador")
 spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Infectados por Departamento", sub="El Salvador")
-Sys.sleep(1)
+
 ## Pausa de Ejecucion:
 invisible(readline(prompt="Presione [enter] para continuar "))
 
 ##### Recuperados
 ## Recuperar datos de Confirmados por Departamento
 confirmados <- read.csv(paste(root, "/recuperados.csv", sep = ""), encoding = "UTF-8")
-Sys.sleep(1)
 
 ## Asignar la informacion de confirmados al mapa:
 confirmados$X <- NULL
@@ -291,14 +281,13 @@ message("Mapa de Recuperados ")
 ## Dibujar los casos de contagios en el mapa:
 #spplot(esa, col.regions = rainbow(16,  alpha = 0.75, rev = FALSE), main = "Covid19 Recuperados por Departamento", sub="El Salvador")
 spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Recuperados por Departamento", sub="El Salvador")
-Sys.sleep(1)
+
 ## Pausa de Ejecucion:
 invisible(readline(prompt="Presione [enter] para continuar "))
 
 ##### Fallecidos
 ## Recuperar datos de Confirmados por Departamento
 confirmados <- read.csv(paste(root, "/fallecidos.csv", sep = ""), encoding = "UTF-8")
-Sys.sleep(1)
 
 ## Asignar la informacion de confirmados al mapa:
 confirmados$X <- NULL
@@ -314,4 +303,7 @@ spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Co
 ## Pausa de Ejecucion:
 invisible(readline(prompt="Presione [enter] para continuar "))
 
-invisible(readline(prompt="Fin de Simulacion "))
+confirmados <- read.csv(paste(root, "/tabulacion.csv", sep = ""), encoding = "UTF-8")
+confirmados$X <- NULL
+esa@data <- confirmados
+spplot(esa, col.regions = heat.colors(16,  alpha = 0.75, rev = TRUE), main = "Covid19 Casos por Departamento", sub="El Salvador")
